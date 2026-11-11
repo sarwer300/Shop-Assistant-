@@ -1,0 +1,9 @@
+{
+  "name": "দোকান AI সহকারী",
+  "short_name": "দোকান সহকারী",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f3f6fa",
+  "theme_color": "#243b53",
+  "lang": "bn"
+}
