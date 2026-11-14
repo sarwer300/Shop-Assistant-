@@ -13,7 +13,7 @@ h1{font-size:22px;margin:0 0 5px}header p{margin:0;color:#dbe7f3;font-size:13px}
 main{max-width:720px;margin:auto;padding:16px}
 .card{background:white;border-radius:16px;padding:16px;margin:0 0 14px;box-shadow:0 2px 10px #1b355010}
 .status{font-size:13px;color:#52616f}.pill{display:inline-block;border-radius:20px;padding:5px 10px;background:#e8f5ed;color:#176b39;font-size:12px;font-weight:700}
-input,button{font:inherit}input[type=search],input[type=url]{width:100%;padding:13px;border:1px solid #cbd5df;border-radius:10px;background:#fff;margin:8px 0}
+input,button{font:inherit}input[type=search],input[type=url],input[type=text]{width:100%;padding:13px;border:1px solid #cbd5df;border-radius:10px;background:#fff;margin:8px 0}
 button,.filebtn{border:0;border-radius:10px;background:#243b53;color:white;padding:12px 14px;font-weight:650;display:inline-block;cursor:pointer}
 .secondary{background:#e7edf4;color:#243b53}.danger{background:#fff0ee;color:#a22}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row button{flex:1}
@@ -24,6 +24,10 @@ button,.filebtn{border:0;border-radius:10px;background:#243b53;color:white;paddi
 label{font-size:14px;font-weight:650}
 #file{display:none}
 footer{text-align:center;color:#73808c;font-size:11px;padding:8px 0 28px}
+.chatlog{background:#f7f9fc;border:1px solid #e2e8ef;border-radius:12px;padding:10px;min-height:64px;max-height:320px;overflow:auto}
+.msg{padding:10px 12px;border-radius:12px;margin:7px 0;line-height:1.55;font-size:14px;white-space:pre-wrap}
+.user{background:#e4edf8;margin-left:22px}.bot{background:#fff;border:1px solid #e2e8ef;margin-right:22px}
+.chatrow{display:flex;gap:8px}.chatrow input{flex:1;min-width:0}.chatrow button{flex:0 0 auto}
 </style>
 </head>
 <body>
@@ -35,9 +39,23 @@ footer{text-align:center;color:#73808c;font-size:11px;padding:8px 0 28px}
  <input id="search" type="search" placeholder="পণ্যের নাম লিখুন — যেমন 7-up বা Mojo">
  <div id="results"><div class="empty">খোঁজার জন্য পণ্যের নাম লিখুন।</div></div>
 </section>
+
+<section class="card">
+ <b>বাংলা চ্যাট সহকারী</b>
+ <p class="small">পণ্যের নাম, দাম বা তাকের অবস্থান সম্পর্কে স্বাভাবিক ভাষায় প্রশ্ন করুন। উত্তর আপনার ফোনে থাকা ডেটা থেকে দেওয়া হবে।</p>
+ <div class="chatlog" id="chatlog" aria-live="polite">
+  <div class="msg bot">আসসালামু আলাইকুম! কী খুঁজছেন? যেমন: “Mojo কোথায় আছে?” অথবা “Rak 5-এ কী কী আছে?”</div>
+ </div>
+ <div class="chatrow">
+  <input id="chatinput" type="text" placeholder="এখানে প্রশ্ন লিখুন..." autocomplete="off">
+  <button id="sendchat">পাঠান</button>
+ </div>
+ <p class="small">নোট: এটি অফলাইনে কাজ করা নিয়মভিত্তিক সহকারী; ইন্টারনেটভিত্তিক ChatGPT নয়।</p>
+</section>
+
 <section class="card">
  <b>ডেটা আপডেট</b>
- <p class="small">নতুন CSV/Excel থেকে CSV ফাইল আমদানি করলে ফোনে অফলাইন কপি আপডেট হবে। CSV-এর শিরোনাম: Product Name, Price, Location</p>
+ <p class="small">নতুন CSV ফাইল আমদানি করলে ফোনে অফলাইন কপি আপডেট হবে। CSV-এর শিরোনাম: Product Name, Price, Location</p>
  <div class="row">
   <label class="filebtn" for="file">CSV ফাইল বাছাই</label>
   <button class="secondary" id="reset">নমুনা ডেটা ফিরিয়ে আনুন</button>
@@ -46,7 +64,7 @@ footer{text-align:center;color:#73808c;font-size:11px;padding:8px 0 28px}
  <p class="small" id="importmsg"></p>
 </section>
 <section class="card">
- <b>অনলাইন সিঙ্ক (পরবর্তী সেটআপ)</b>
+ <b>অনলাইন সিঙ্ক</b>
  <p class="small">Google Sheets থেকে প্রকাশিত CSV লিংক এখানে যোগ করলে ইন্টারনেট থাকলে নতুন তথ্য আনা যাবে। ব্যক্তিগত/গোপন শিট প্রকাশ করবেন না।</p>
  <label for="csvurl">প্রকাশিত CSV লিংক</label>
  <input id="csvurl" type="url" placeholder="https://docs.google.com/...output=csv">
@@ -55,7 +73,7 @@ footer{text-align:center;color:#73808c;font-size:11px;padding:8px 0 28px}
 </section>
 <section class="card">
  <b>ব্যবহার</b>
- <p class="small">এটি প্রথম পরীক্ষামূলক সংস্করণ। এটি পণ্য খুঁজে দেয়; এখনো কথোপকথনভিত্তিক AI বা স্বয়ংক্রিয় Google Sheets দ্বিমুখী সিঙ্ক চালু নেই।</p>
+ <p class="small">চ্যাট সহকারী আপনার আমদানি করা পণ্যের নাম, দাম ও অবস্থান থেকে উত্তর দেয়। এটি এখনো প্রকৃত AI বা স্বয়ংক্রিয় দ্বিমুখী Google Sheets সিঙ্ক নয়।</p>
 </section>
 <footer>Shop Assistant • আপনার ফোনে সংরক্ষিত পণ্য তালিকা</footer>
 </main>
@@ -97,6 +115,66 @@ function render(){
  box.innerHTML=found.map(p=>`<div class="item"><div class="name">${esc(p[0])}</div><div class="meta"><span>দাম: ${esc(p[1])}</span><b>${esc(p[2])}</b></div></div>`).join("");
 }
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+
+function normalize(s){
+ return clean(s).toLowerCase().replace(/[?.,!।]/g," ").replace(/\s+/g," ");
+}
+function answerQuestion(question){
+ const q=normalize(question);
+ if(!q)return "প্রশ্নটি লিখুন।";
+ if(!products.length)return "ডেটাবেসে কোনো পণ্য নেই। আগে CSV ফাইল আমদানি করুন।";
+
+ // তাক/র‍্যাকের সব পণ্য জানতে চাইলে
+ const rackMatch=q.match(/(?:rak|rack|র‍্যাক|রাক|তাক)\s*[-:]?\s*(\d+)/i);
+ const asksRackList=/(কি কি|কী কী|কোন কোন|সব পণ্য|পণ্য আছে|কি আছে|কী আছে)/.test(q);
+ if(rackMatch && asksRackList){
+  const rack="rak "+rackMatch[1];
+  const found=products.filter(p=>normalize(p[2]).replace("rack","rak")===rack);
+  if(!found.length)return `${rackMatch[1]} নম্বর তাকে কোনো পণ্য পাওয়া যায়নি।`;
+  return `${rackMatch[1]} নম্বর তাকে ${found.length}টি পণ্য আছে:\n`+
+    found.map(p=>`• ${p[0]} — দাম ${p[1]}`).join("\n");
+ }
+
+ // পণ্যের নামের মিল খোঁজা
+ const tokens=q.split(" ").filter(t=>t.length>1 && !["kothay","kothai","দাম","কত","কোথায়","কোথায়","আছে","দেখাও","খুঁজে","বল","হবে","এর","টা","টি","কী","কি","পণ্যের","অবস্থান","লোকেশন","price","where","is","the","of","show","find"].includes(t));
+ let found=products.filter(p=>{
+  const n=normalize(p[0]);
+  return tokens.some(t=>n.includes(t));
+ });
+ if(!found.length){
+  return "দুঃখিত, এই নামে পণ্য খুঁজে পাইনি। পণ্যের নামের কিছু অংশ লিখে আবার চেষ্টা করুন।";
+ }
+ if(found.length>8)found=found.slice(0,8);
+ const wantsPrice=/(দাম|কত|price|টাকা)/.test(q);
+ const wantsLocation=/(কোথায়|কোথায়|কোথায় আছে|কোথায় আছে|লোকেশন|অবস্থান|তাক|rak|rack)/.test(q);
+ if(found.length===1){
+  const p=found[0];
+  if(wantsPrice && !wantsLocation)return `${p[0]}-এর দাম ${p[1]} টাকা।`;
+  if(wantsLocation && !wantsPrice)return `${p[0]} রাখা আছে ${p[2]}-এ।`;
+  return `পণ্য: ${p[0]}\nদাম: ${p[1]} টাকা\nঅবস্থান: ${p[2]}`;
+ }
+ return `মিলেছে ${found.length}টি পণ্য:\n`+found.map(p=>`• ${p[0]} — ${p[1]} টাকা — ${p[2]}`).join("\n");
+}
+function addMessage(text,type){
+ const log=document.getElementById("chatlog");
+ const div=document.createElement("div");
+ div.className="msg "+type;
+ div.textContent=text;
+ log.appendChild(div);
+ log.scrollTop=log.scrollHeight;
+}
+function sendChat(){
+ const input=document.getElementById("chatinput");
+ const question=clean(input.value);
+ if(!question)return;
+ addMessage(question,"user");
+ addMessage(answerQuestion(question),"bot");
+ input.value="";
+ input.focus();
+}
+document.getElementById("sendchat").addEventListener("click",sendChat);
+document.getElementById("chatinput").addEventListener("keydown",e=>{if(e.key==="Enter")sendChat()});
+
 function init(){try{products=JSON.parse(localStorage.getItem(KEY))||sample}catch{products=sample}if(!products.length)products=sample;renderCount();render()}
 document.getElementById("search").addEventListener("input",render);
 document.getElementById("file").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{products=parseCSV(await f.text());save();render();document.getElementById("importmsg").textContent="সফলভাবে "+products.length+"টি পণ্য ফোনে সংরক্ষিত হয়েছে।"}catch(err){document.getElementById("importmsg").textContent=err.message}e.target.value=""});
